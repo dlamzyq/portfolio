@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨渊觉醒 · AI玄幻短片创作档案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   CSS VARIABLES — 配色体系
+   ======================================== */
+:root {
+  --void: #060609;
+  --ink-base: #0c0c14;
+  --ink-paper: #14121a;
+  --card-surface: rgba(18, 16, 26, 0.85);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --ink-green: #1a3a2c;
+  --ink-green-light: #2a5a44;
+  --water-blue: #5b9eb8;
+  --water-blue-glow: rgba(91, 158, 184, 0.4);
+  --mystic-purple: #6b3a7a;
+  --purple-glow: rgba(107, 58, 122, 0.5);
+  --gold: #c4a35a;
+  --gold-glow: #e8c97a;
+  --gold-subtle: rgba(196, 163, 90, 0.15);
+  --text-primary: #c8bfb2;
+  --text-dim: #8a8278;
+  --text-muted: #5a5550;
+  --danger-red: #c0392b;
+  --font-display: 'Ma Shan Zheng', cursive;
+  --font-body: 'Noto Serif SC', 'Source Han Serif SC', serif;
+  --font-accent: 'Crimson Text', 'Georgia', serif;
+  --transition-smooth: 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body {
+  font-family: var(--font-body);
+  background: var(--void);
+  color: var(--text-primary);
+  line-height: 1.8;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+::selection { background: var(--gold-subtle); color: var(--gold-glow); }
+
+/* ========================================
+   INK WASH CANVAS BACKGROUND
+   ======================================== */
+#ink-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ========================================
+   FLOATING PARTICLES
+   ======================================== */
+.particles-layer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float-up linear infinite;
+  opacity: 0;
+}
+.particle.gold { background: var(--gold-glow); box-shadow: 0 0 6px 2px var(--gold-subtle); }
+.particle.blue { background: var(--water-blue); box-shadow: 0 0 6px 2px var(--water-blue-glow); }
+.particle.purple { background: #9b6ab0; box-shadow: 0 0 6px 2px var(--purple-glow); }
+
+@keyframes float-up {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  10%  { opacity: 0.8; }
+  80%  { opacity: 0.3; }
+  100% { transform: translateY(-110vh) scale(0.2); opacity: 0; }
+}
+
+/* ========================================
+   SIDE NAVIGATION
+   ======================================== */
+.side-nav {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-smooth);
+  flex-direction: row-reverse;
+}
+.side-nav a .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: all var(--transition-smooth);
+  flex-shrink: 0;
+}
+.side-nav a.active { color: var(--gold-glow); }
+.side-nav a.active .dot {
+  background: var(--gold-glow);
+  box-shadow: 0 0 12px 3px var(--gold-subtle);
+  transform: scale(1.5);
+}
+.side-nav a .label { opacity: 0; transform: translateX(10px); transition: all var(--transition-smooth); }
+.side-nav a:hover .label,
+.side-nav a.active .label { opacity: 1; transform: translateX(0); }
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(26, 58, 44, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 30% 60%, rgba(107, 58, 122, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 70% 50%, rgba(91, 158, 184, 0.08) 0%, transparent 70%);
+  z-index: -1;
+}
+.hero-badge {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+  border: 1px solid rgba(196, 163, 90, 0.3);
+  padding: 0.4rem 1.5rem;
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  background: rgba(12, 12, 20, 0.5);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  color: var(--text-primary);
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.5rem;
+}
+.hero-title .accent { color: var(--gold-glow); }
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text-dim);
+  font-weight: 300;
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+.hero-subtitle .em { color: var(--water-blue); font-weight: 500; }
+.hero-divider {
+  width: 60px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 0 auto 3rem;
+}
+
+/* Video embed */
+.video-container {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  background: var(--ink-paper);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+.video-container iframe,
+.video-container video {
+  width: 100%; height: 100%;
+  border: none;
+}
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(12,12,20,0.95) 0%, rgba(20,18,26,0.9) 100%);
+  cursor: pointer;
+  transition: background var(--transition-smooth);
+}
+.video-placeholder:hover { background: linear-gradient(135deg, rgba(18,16,26,0.9) 0%, rgba(26,24,34,0.85) 100%); }
+.video-placeholder .play-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all var(--transition-bounce);
+  background: rgba(196, 163, 90, 0.08);
+}
+.video-placeholder:hover .play-icon {
+  transform: scale(1.1);
+  border-color: var(--gold-glow);
+  box-shadow: 0 0 30px rgba(196, 163, 90, 0.25);
+  background: rgba(196, 163, 90, 0.15);
+}
+.video-placeholder .play-icon svg { width: 28px; height: 28px; fill: var(--gold); margin-left: 4px; }
+.video-placeholder .placeholder-text {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* Author info bar */
+.author-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.author-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ink-green), var(--water-blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  border: 2px solid rgba(255,255,255,0.08);
+}
+.author-name {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.author-contact {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--text-muted);
+  transition: all var(--transition-smooth);
+}
+.author-contact:hover { color: var(--water-blue); border-color: var(--water-blue); }
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  animation: breathe 2.5s ease-in-out infinite;
+}
+.scroll-hint span { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted); }
+.scroll-hint .line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--text-muted), transparent);
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(8px); }
+}
+
+/* ========================================
+   SECTION TITLE (between modules)
+   ======================================== */
+.section-spacer {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.04), transparent);
+  margin: 0 10%;
+}
+
+/* ========================================
+   EXHIBITION MODULE
+   ======================================== */
+.module {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.module-header {
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+.module-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+  pointer-events: none;
+}
+.module:nth-child(3) .module-header::before { background: radial-gradient(circle at 20% 50%, rgba(26,58,44,0.15), transparent 70%); }
+.module:nth-child(5) .module-header::before { background: radial-gradient(circle at 80% 50%, rgba(107,58,122,0.12), transparent 70%); }
+.module:nth-child(7) .module-header::before { background: radial-gradient(circle at 30% 50%, rgba(91,158,184,0.1), transparent 70%); }
+.module:nth-child(9) .module-header::before { background: radial-gradient(circle at 70% 30%, rgba(196,163,90,0.08), transparent 70%); }
+
+.module-header:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.module-header:hover::before { opacity: 1; }
+.module.open .module-header { border-color: rgba(255,255,255,0.1); border-radius: 16px 16px 0 0; }
+
+.module-number {
+  font-family: var(--font-accent);
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-muted);
+  opacity: 0.4;
+  flex-shrink: 0;
+  width: 60px;
+  text-align: center;
+  transition: all var(--transition-smooth);
+}
+.module.open .module-number { color: var(--gold); opacity: 0.7; }
+.module-header:hover .module-number { opacity: 0.6; }
+.module.open .module-header:hover .module-number { opacity: 0.9; }
+
+.module-title-group { flex: 1; }
+.module-section-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.module-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+.module-tldr {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 650px;
+}
+.module-toggle {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  align-self: center;
+}
+.module-toggle:hover { border-color: var(--gold); color: var(--gold); }
+.module.open .module-toggle { transform: rotate(45deg); border-color: var(--gold); color: var(--gold); }
+
+/* Expanded content */
+.module-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), padding 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  background: var(--card-surface);
+  border: 1px solid transparent;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+}
+.module.open .module-body {
+  max-height: 8000px;
+  border-color: var(--card-border);
+  padding: 2rem 1.5rem 2.5rem;
+}
+
+.module-detail {
+  display: grid;
+  gap: 2rem;
+}
+.detail-block h4 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.detail-block h4::before {
+  content: '';
+  width: 4px; height: 16px;
+  border-radius: 2px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+.detail-block p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.9;
+  margin-bottom: 0.8rem;
+}
+.detail-block .highlight {
+  color: var(--water-blue);
+  font-weight: 500;
+}
+.detail-block .tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.7rem;
+  border-radius: 100px;
+  margin: 0.15rem 0.3rem;
+  background: var(--gold-subtle);
+  color: var(--gold);
+  border: 1px solid rgba(196,163,90,0.2);
+}
+.detail-block .tag.purple { background: rgba(107,58,122,0.2); color: #b07cc4; border-color: rgba(107,58,122,0.3); }
+.detail-block .tag.blue { background: rgba(91,158,184,0.15); color: #7bbdd0; border-color: rgba(91,158,184,0.25); }
+.insight-quote {
+  border-left: 2px solid var(--gold);
+  padding: 0.8rem 1.2rem;
+  margin: 1rem 0;
+  background: var(--gold-subtle);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--gold-glow);
+  font-size: 0.9rem;
+}
+
+/* Problem → Solution cards */
+.problem-card {
+  background: rgba(20, 18, 26, 0.6);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--card-border);
+  transition: border-color var(--transition-smooth);
+}
+.problem-card:hover { border-color: rgba(255,255,255,0.12); }
+.problem-card .prob-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--danger-red);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.problem-card .sol-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--water-blue);
+  text-transform: uppercase;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+}
+.problem-card h5 { font-family: var(--font-body); font-size: 0.95rem; color: var(--text-primary); }
+.problem-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.8; }
+
+/* ========================================
+   MEDIA GALLERY
+   ======================================== */
+.media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.media-card {
+  background: var(--ink-paper);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  transition: all var(--transition-smooth);
+}
+.media-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+.media-card .img-placeholder {
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(135deg, rgba(20,18,26,1) 0%, rgba(26,24,36,1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.media-card .img-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(6,6,9,0.6));
+}
+.media-card .img-placeholder .icon {
+  font-size: 2rem;
+  opacity: 0.3;
+  color: var(--text-muted);
+}
+.media-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.media-card img:hover { opacity: 0.85; }
+.media-card .img-placeholder img {
+  aspect-ratio: auto;
+  object-fit: contain;
+  width: 100%;
+  height: auto;
+}
+.media-card .img-label {
+  padding: 0.7rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(6,6,9,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.lightbox.active { opacity: 1; pointer-events: auto; }
+.lightbox img {
+  max-width: 92vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 0 80px rgba(0,0,0,0.6);
+}
+.lightbox .close-hint {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+/* Audio cards */
+.audio-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--ink-paper);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--card-border);
+  transition: all var(--transition-smooth);
+  margin-bottom: 0.6rem;
+}
+.audio-card:hover { border-color: rgba(255,255,255,0.12); }
+.audio-play {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--water-blue);
+  background: rgba(91,158,184,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-smooth);
+  color: var(--water-blue);
+}
+.audio-play:hover { background: rgba(91,158,184,0.2); box-shadow: 0 0 15px rgba(91,158,184,0.2); }
+.audio-play.playing { background: var(--water-blue); color: var(--void); }
+.audio-info { flex: 1; }
+.audio-info .audio-name { font-size: 0.85rem; color: var(--text-primary); font-weight: 500; }
+.audio-info .audio-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
+.audio-tag {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 100px;
+  background: rgba(91,158,184,0.15);
+  color: var(--water-blue);
+  letter-spacing: 0.05em;
+}
+
+/* Tool flow diagram */
+.tool-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: var(--ink-paper);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  margin: 1.5rem 0;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+.tool-node {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  text-align: center;
+  white-space: nowrap;
+}
+.tool-node .tool-name { color: var(--text-primary); font-weight: 500; }
+.tool-node .tool-role { color: var(--text-muted); font-size: 0.7rem; }
+.tool-arrow { color: var(--text-muted); font-size: 1.2rem; flex-shrink: 0; }
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin-top: 4rem;
+}
+.footer-credits {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.footer-credits .name { color: var(--gold); }
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color var(--transition-smooth);
+  padding: 0.4rem 0;
+}
+.footer-links a:hover { color: var(--water-blue); }
+.footer-copy {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+  .side-nav { display: none; }
+  .hero { padding: 3rem 1.25rem; min-height: 90vh; }
+  .hero-title { font-size: 2.8rem; }
+  .module { padding: 1.5rem 1rem; }
+  .module-header { flex-wrap: wrap; gap: 0.75rem; padding: 1.5rem 1rem; }
+  .module-number { font-size: 2.5rem; width: 40px; }
+  .module-toggle { width: 32px; height: 32px; font-size: 1rem; }
+  .module-title { font-size: 1.4rem; }
+  .module-body { padding: 0; }
+  .module.open .module-body { padding: 1.25rem 1rem 1.5rem; }
+  .tool-flow { gap: 0.3rem; padding: 1rem; }
+  .tool-arrow { display: none; }
+  .media-gallery { grid-template-columns: 1fr 1fr; }
+  .author-bar { flex-direction: column; gap: 0.5rem; }
+}
+@media (max-width: 480px) {
+  .media-gallery { grid-template-columns: 1fr; }
+  .hero-title { font-size: 2.2rem; }
+  .video-placeholder .play-icon { width: 56px; height: 56px; }
+}
+
+/* ========================================
+   FADE-IN ON SCROLL
+   ======================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Ink Wash Canvas -->
+<canvas id="ink-canvas"></canvas>
+
+<!-- Floating Particles -->
+<div class="particles-layer" id="particles"></div>
+
+<!-- Side Navigation -->
+<nav class="side-nav" aria-label="页面导航">
+  <a href="#hero" class="active" data-section="hero"><span class="label">封面</span><span class="dot"></span></a>
+  <a href="#conception" data-section="conception"><span class="label">构思</span><span class="dot"></span></a>
+  <a href="#tools" data-section="tools"><span class="label">工具</span><span class="dot"></span></a>
+  <a href="#process" data-section="process"><span class="label">过程</span><span class="dot"></span></a>
+  <a href="#harvest" data-section="harvest"><span class="label">收获</span><span class="dot"></span></a>
+</nav>
+
+<!-- ========================================
+     HERO — 封面首屏
+     ======================================== -->
+<section class="hero" id="hero">
+  <div class="hero-badge">AI FILM · CREATION ARCHIVE</div>
+  <h1 class="hero-title">
+    墨渊<span class="accent">·</span>觉醒
+  </h1>
+  <p class="hero-subtitle">
+    一部<span class="em">AI全链路创作</span>的东方玄幻特效短片<br>
+    从混沌到光芒，一个守护者的千年封印与觉醒
+  </p>
+  <div class="hero-divider"></div>
+
+  <!-- Video Embed -->
+  <div class="video-container reveal" id="videoBox">
+    <iframe src="//player.bilibili.com/player.html?bvid=BV188TF6MEam&page=1&high_quality=1&danmaku=0" style="width:100%;height:100%;border:none;" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+  </div>
+
+  <!-- Author Info -->
+  <div class="author-bar">
+    <div class="author-avatar">玄</div>
+    <span class="author-name">郑博</span>
+  </div>
+
+  <div class="scroll-hint">
+    <span>滚动探索</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<div class="section-spacer"></div>
+
+<!-- ========================================
+     MODULE 1 — 构思
+     ======================================== -->
+<section class="module reveal" id="conception">
+  <div class="module-header" onclick="toggleModule(this)" role="button" tabindex="0" aria-expanded="false">
+    <div class="module-number">01</div>
+    <div class="module-title-group">
+      <div class="module-section-label">第一章</div>
+      <h2 class="module-title">构思 — 方向选择与灵感来源</h2>
+      <p class="module-tldr">
+        从赛博朋克到东方玄幻的转向，主角"玄"历经<span class="highlight">青 → 紫金 → 墨绿蓝水</span>三代配色迭代，最终找到与角色气质真正匹配的视觉语言。灵感来自修仙境界突破叙事、高饱和短视频美学，以及AI创作中的意外之美。
+      </p>
+    </div>
+    <button class="module-toggle" aria-label="展开/收起">+</button>
+  </div>
+  <div class="module-body">
+    <div class="module-detail">
+
+      <div class="detail-block">
+        <h4>方向选择：为什么是东方玄幻</h4>
+        <p>项目核心定位为<span class="highlight">"炫酷AI特效短片"</span>。最初碰撞了多个方向——<span class="tag">赛博觉醒</span><span class="tag">时空穿越</span><span class="tag">数字分身</span><span class="tag">梦境入侵</span>——最终锁定东方玄幻修仙。选择理由很明确：赛博朋克、霓虹故障风格的AI视频已大量存在，而修仙题材中的能量爆发、法术对轰、色彩爆炸，天然适合展示AI特效的表现力。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>世界观迭代：被放弃的赛博路线</h4>
+        <p>第一版方案曾尝试融入"赛博故障艺术"——反派以霓虹几何色块和数字乱码形态出现。但在效果验证后，这个方向被果断放弃。<strong>不是因为技术无法实现，而是审美逻辑不成立</strong>——修仙世界的力量体系是"气"的流动，赛博元素是"电"的脉冲，两者在本质上无法融合。最终反派被重新设计为纯粹的<span class="highlight">"魔气实体"</span>：紫黑能量构成的身躯、虚空裂痕般的纹路、被封印锁链缠绕的魔角，完全回归东方玄幻语境。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>主角"玄"的三代视觉迭代</h4>
+        <p>这是整个项目最核心的设计过程：</p>
+        <p><span class="tag">第一版·青色</span>青玉肩甲、翡翠质感皮肤、青色光剑。问题：青色在暗调基底上容易显脏，质感控制不好呈现廉价塑料感。</p>
+        <p><span class="tag">第二版·紫金</span>紫玉发簪、紫水晶肩甲、紫金光芒。理论成立，但过于威严——将主角推向了"神"的一端，与他作为千年封印守护者的沉静气质略有偏差。</p>
+        <p><span class="tag blue">第三版·墨绿蓝水 最终采用</span>墨绿色长袍下摆泛白，身上流淌蓝色水流纹样，肩膀悬浮阴阳鱼。墨绿是墨色的延伸，保持与"水墨"基因的连接；蓝水流是灵气的可视化；阴阳鱼是道家最核心的符号。这套配色让主角的气质回归"道法自然"——沉静、深厚、但不可测。</p>
+        <div class="insight-quote">
+          "配色方案没有绝对的对错，只有与角色气质是否匹配。紫金是'向外绽放的光'，适合神性爆发时刻；墨绿蓝水是'向内沉淀的韵'，适合承载千年封印的厚重。最终方案选择了后者——角色从'征服者'变为'承载者'，这反而让他的觉醒更加有力。"
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h4>三层灵感来源</h4>
+        <p><span class="highlight">其一，修仙"境界突破"叙事。</span>全片结构——封印→觉醒→爆发→净化——本质是一个浓缩的修仙弧线。每一次色彩变化对应一次力量层级的提升，观众通过颜色就能理解主角处于哪个阶段。</p>
+        <p><span class="highlight">其二，高饱和色彩冲击的短视频美学。</span>15秒强冲击的需求，要求每一帧都具备截图级表现力。主角的"静"与特效的"动"形成互补，沉静配色反而增强了爆发段落的冲击力。</p>
+        <p><span class="highlight">其三，AI生成的"意外之美"。</span>残魂的扭曲形态、光粒的飞舞轨迹、紫焰的流动纹理——这些细节不做过度的预设，信任AI在参数范围内产出的惊喜。</p>
+      </div>
+
+      <!-- Character Concept Art Gallery -->
+      <div class="detail-block">
+        <h4>角色定妆照 & 概念图</h4>
+        <div class="media-gallery">
+          <div class="media-card">
+            <img src="media/玄.jpeg" alt="主角玄 — 墨绿蓝水最终方案" loading="lazy">
+            <div class="img-label">主角"玄" — 墨绿蓝水最终方案</div>
+          </div>
+          <div class="media-card">
+            <img src="media/影魔.jpeg" alt="反派影魔 — 魔气实体设计" loading="lazy">
+            <div class="img-label">反派"影魔" — 魔气实体设计</div>
+          </div>
+          <div class="media-card">
+            <img src="media/场景.png" alt="场景空镜" loading="lazy">
+            <div class="img-label">场景空镜 — 世界观环境设定</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-spacer"></div>
+
+<!-- ========================================
+     MODULE 2 — 工具
+     ======================================== -->
+<section class="module reveal" id="tools">
+  <div class="module-header" onclick="toggleModule(this)" role="button" tabindex="0" aria-expanded="false">
+    <div class="module-number">02</div>
+    <div class="module-title-group">
+      <div class="module-section-label">第二章</div>
+      <h2 class="module-title">工具 — AI工具链与各自角色</h2>
+      <p class="module-tldr">
+        全链路AI协作：<span class="highlight">DeepSeek</span>（创意引擎）→ <span class="highlight">GPT Image + Banana 2</span>（图像生成）→ <span class="highlight">如意SD2.0</span>（视频生成）→ <span class="highlight">如意/Minimax</span>（音效生成），每个工具承担明确且互补的角色。
+      </p>
+    </div>
+    <button class="module-toggle" aria-label="展开/收起">+</button>
+  </div>
+  <div class="module-body">
+    <div class="module-detail">
+
+      <!-- Tool chain flow -->
+      <div class="tool-flow">
+        <div class="tool-node"><div class="tool-name">DeepSeek</div><div class="tool-role">创意引擎</div></div>
+        <span class="tool-arrow">→</span>
+        <div class="tool-node"><div class="tool-name">GPT Image</div><div class="tool-role">概念验证</div></div>
+        <span class="tool-arrow">→</span>
+        <div class="tool-node"><div class="tool-name">Banana 2</div><div class="tool-role">精细出图</div></div>
+        <span class="tool-arrow">→</span>
+        <div class="tool-node"><div class="tool-name">如意 SD2.0</div><div class="tool-role">视频生成</div></div>
+        <span class="tool-arrow">→</span>
+        <div class="tool-node"><div class="tool-name">如意/Minimax</div><div class="tool-role">音效生成</div></div>
+        <span class="tool-arrow">→</span>
+        <div class="tool-node"><div class="tool-name">人工整合</div><div class="tool-role">方向把控·质量筛选·最终合成</div></div>
+      </div>
+
+      <div class="detail-block">
+        <h4>DeepSeek — 核心创意引擎</h4>
+        <p>承担整个项目的创意发动机角色。在多轮对话中完成了：<span class="tag">方向定位</span>从模糊的"炫酷特效"锁定东方玄幻修仙、<span class="tag">世界观搭建</span>角色/场景/色彩体系、<span class="tag">剧本编写</span>2分钟完整剧本/四幕结构、<span class="tag">分镜拆解</span>41个镜头的飞书表格、<span class="tag">提示词编写</span>角色/场景/武器/特效的详细生成提示词。</p>
+        <p>最大价值在于<span class="highlight">快速响应迭代需求的能力</span>——"绿色有点丑"立即给出替代方案；"赛博朋克突兀"将全部视觉元素翻译为纯东方玄幻语境；"分镜再细化一点"把2秒镜头拆成4个0.5秒子镜头。这种创意敏捷性，是传统编剧流程无法比拟的。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>GPT Image Generation — 概念验证与风格探索</h4>
+        <p>用于快速概念验证和风格探索。在项目初期快速生成不同配色方案、不同设计方向的概念图，用于对比和筛选。优势在于迭代速度快，可在一轮对话中同时生成多个版本进行比较。主角从青色到紫金到最终墨绿蓝水的多轮配色尝试，都是通过GPT Image快速跑通再做出决策。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>Banana 2 — 精细图像生成</h4>
+        <p>用于最终成品的精细图像生成。优势在于对提示词的还原度更高，特别是在<span class="highlight">材质描述</span>方面。主角身上蓝色水流——那种在衣袍表面流动、既不是印花也不是刺绣、而是灵动的能量纹路——需要通过精确的材质描述才能呈现。</p>
+        <div class="insight-quote">
+          "提示词必须精确到材质、光泽、具体元素的行为。主角肩膀上的阴阳鱼不是画上去的图案，而是'缓缓旋转的能量体，墨色与蓝色双鱼，悬浮于肩甲上方'。AI不会帮你脑补你没有说清楚的东西。你对一个画面想得越清楚，生成结果就越接近预期。"
+        </div>
+        <p>场景采用<span class="highlight">多视角策略</span>（正面/侧面/俯视/反面），每个视角单独出图，确保后续动态化时空间关系的一致性。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>如意 SD2.0 — 视频生成核心</h4>
+        <p>承担将静态概念图转化为动态视频的关键角色：</p>
+        <p><span class="tag blue">特效动态化</span>紫金光束射出、紫焰翅膀展开、冲击波扩散、残魂飘飞——关键参数包括运动速度（0.8倍/0.5倍慢动作）、运动方向（中心向外扩散/地面向上飞升）、色彩过渡的渐变过程。</p>
+        <p><span class="tag blue">角色动态</span>主角身上蓝色水流的流动是本片最精妙的动态细节——水流需在衣袍表面持续流淌，跟随角色动作产生波动，但又不能与衣料褶皱冲突。通过描述"水流沿衣袍褶皱方向流动""流速与角色动作幅度呈正比"实现。</p>
+        <p><span class="tag blue">空间效果</span>空间坍缩的鱼眼变形、光线被抽离的暗区形成、雾墙翻涌——需要改变画面空间结构的效果。</p>
+        <div class="insight-quote">
+          "AI视频生成对'速度描述词'高度敏感。如果不明确标注速度参数，默认生成速度往往偏快，导致特效显得廉价。标注具体参数后，特效的质感和重量感明显提升。"
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h4>如意 / Minimax — 音效生成</h4>
+        <p>采用<span class="highlight">三层音效逻辑</span>：底层环境音 / 中层能量音 / 顶层冲击音。每个镜头标注三层音效需求，Minimax分别生成各层独立音轨，后期混音合成。能量音效（光剑高频纯净音、对撞金属撞击音）需要精确频率控制；氛围音效（残魂嘶吼：人声拉伸+倒放+多层叠加）需要分层生成再合成。</p>
+        <div class="audio-card">
+          <button class="audio-play" onclick="toggleAudio(this, 'media/开头背景音乐3.mp3')" aria-label="播放音乐">▶</button>
+          <div class="audio-info">
+            <div class="audio-name">开头背景音乐 — 序幕与觉醒</div>
+            <div class="audio-desc">封印深渊的沉静氛围，主角登场时的灵气涌动</div>
+          </div>
+          <span class="audio-tag">序幕</span>
+        </div>
+        <div class="audio-card">
+          <button class="audio-play" onclick="toggleAudio(this, 'media/中间打斗背景音乐.mp3')" aria-label="播放音乐">▶</button>
+          <div class="audio-info">
+            <div class="audio-name">中间打斗背景音乐 — 对抗与爆发</div>
+            <div class="audio-desc">光剑对撞、紫焰翅膀展开、能量冲击波扩散的激烈段落</div>
+          </div>
+          <span class="audio-tag">高潮</span>
+        </div>
+        <div class="audio-card">
+          <button class="audio-play" onclick="toggleAudio(this, 'media/结尾音乐2.mp3')" aria-label="播放音乐">▶</button>
+          <div class="audio-info">
+            <div class="audio-name">结尾音乐 — 净化与余韵</div>
+            <div class="audio-desc">金色光粒散落、封印解除后的宁静回归</div>
+          </div>
+          <span class="audio-tag">尾声</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-spacer"></div>
+
+<!-- ========================================
+     MODULE 3 — 过程
+     ======================================== -->
+<section class="module reveal" id="process">
+  <div class="module-header" onclick="toggleModule(this)" role="button" tabindex="0" aria-expanded="false">
+    <div class="module-number">03</div>
+    <div class="module-title-group">
+      <div class="module-section-label">第三章</div>
+      <h2 class="module-title">过程 — 问题与解决方法</h2>
+      <p class="module-tldr">
+        五大核心挑战：赛博审美冲突的果断转向、主角配色三次迭代的艰难决策、反派六翼穿帮的形态重构、<span class="highlight">2分钟节奏的秒级控制</span>、多工具协作的视觉一致性——每一次问题都推动作品走向更成熟的形态。
+      </p>
+    </div>
+    <button class="module-toggle" aria-label="展开/收起">+</button>
+  </div>
+  <div class="module-body">
+    <div class="module-detail">
+
+      <div class="problem-card">
+        <div class="prob-label">▎问题一</div>
+        <h5>赛博元素与东方玄幻的审美冲突</h5>
+        <p>初期反派被设计为"霓虹故障艺术风格"——碎裂几何色块、品红与青色的故障像素斗篷。在修仙语境下极其突兀，"像在山水画上贴LED灯带"。</p>
+        <div class="sol-label">▸ 解决</div>
+        <p>彻底剥离所有科技感元素，回归东方玄幻"魔气"概念。用<span class="highlight">紫黑能量</span>替代故障块，用<span class="highlight">虚空裂痕</span>替代像素乱码，用<span class="highlight">被腐蚀的符文锁链</span>替代数字代码。修正后反派视觉逻辑：墨黑为底、血紫为辅、暗金为骨、白焰为眼。整个系列的视觉统一性因此确立。</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="prob-label">▎问题二</div>
+        <h5>主角配色的三次迭代 —— 最难的设计决策</h5>
+        <p>青色方案（廉价塑料感）→ 紫金方案（过于威严，偏离"守护者"的沉静）→ 最终墨绿蓝水方案。每一次推翻前一个方案都需要勇气，因为每次迭代都意味着大量已生成素材的作废。</p>
+        <div class="sol-label">▸ 解决</div>
+        <p>核心认知转变：<span class="highlight">颜色是角色的延伸，不是角色的装饰。</span>墨绿是他作为"墨渊"的身份印记，蓝水流是他体内灵气的可视化，阴阳鱼是他力量本源的符号。三种元素合力讲了一句话：他是一个站在深渊边缘、内心却流淌着生生不息之力的守护者。这种气质反而让觉醒爆发更具冲击力——观众看到的是一个"不轻易出手的人终于出手了"。</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="prob-label">▎问题三</div>
+        <h5>反派六翼的穿帮风险</h5>
+        <p>早期反派被设计为六翼形态（六根骨刺化翼），但在动态化时暴露出严重问题：六翼在打斗中会与手臂动作、地面、光剑产生大量穿插，在AI生成的视频中几乎无法避免穿帮。</p>
+        <div class="sol-label">▸ 解决</div>
+        <p>改为类人形双翼，附着于肩胛骨位置，与手臂动作自然分离。这个改动不仅解决了穿帮问题，还带来了新的打斗设计——<span class="highlight">以翼为盾防御</span>（翼被光柱洞穿）、<span class="highlight">翼扇卷起紫焰旋风</span>反击，打斗层次反而更加丰富。限制催生了更好的创意。</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="prob-label">▎问题四</div>
+        <h5>2分钟节奏的精确控制</h5>
+        <p>序幕铺垫→第一幕对峙→第二幕压迫→第三幕爆发→第四幕净化，需在2分钟内完成完整情绪弧线。最大挑战在第二幕：既要展现打斗激烈，又要积累压迫感，还要在结尾完成转折。</p>
+        <div class="sol-label">▸ 解决</div>
+        <p><span class="highlight">秒级精度的分镜拆分。</span>第二幕拆为23个子镜头，每个标注精确时长（1秒或2秒）、运镜方式（推近/横摇/固定）、音效变化节点。前半段交锋每个镜头1-2秒快节奏，中段吞噬每个镜头2秒积累压迫，结尾转折每个镜头1秒完成从极静到极动的转换。精确到秒的节奏控制，保证了2分钟内每一个节拍都有明确的情绪功能。</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="prob-label">▎问题五</div>
+        <h5>多工具协作的视觉一致性</h5>
+        <p>GPT Image、Banana 2、如意三个图像/视频生成工具，同一角色在不同工具中生成的形象存在差异——尤其是主角身上蓝色水流的纹理和阴阳鱼的形态。</p>
+        <div class="sol-label">▸ 解决</div>
+        <p>建立详细的<span class="highlight">"视觉资产库"</span>——为每个角色、场景、武器编写超过500字的详细提示词，精确描述材质、色彩、光线、比例。所有生成基于同一套提示词，关键帧先确定一张"标准图"，后续生成都以该图为参考基准。主角的墨绿长袍、蓝水流、阴阳鱼三个核心元素，在所有提示词中作为固定锚点被反复强调。</p>
+      </div>
+
+      <!-- Storyboard & Keyframe Gallery -->
+      <div class="detail-block">
+        <h4>分镜图 & 关键帧截图</h4>
+        <div class="media-gallery">
+          <div class="media-card">
+            <img src="media/故事板1.png" alt="分镜表片段 — 第二幕" loading="lazy">
+          </div>
+          <div class="media-card">
+            <img src="media/故事板2.png" alt="关键帧：封印崩碎瞬间" loading="lazy">
+          </div>
+          <div class="media-card">
+            <img src="media/故事板3.png" alt="关键帧：紫焰翅膀展开" loading="lazy">
+          </div>
+          <div class="media-card">
+            <img src="media/故事板4.png" alt="关键帧：金色光粒净化" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-spacer"></div>
+
+<!-- ========================================
+     MODULE 4 — 收获
+     ======================================== -->
+<section class="module reveal" id="harvest">
+  <div class="module-header" onclick="toggleModule(this)" role="button" tabindex="0" aria-expanded="false">
+    <div class="module-number">04</div>
+    <div class="module-title-group">
+      <div class="module-section-label">第四章</div>
+      <h2 class="module-title">收获 — 创作带来的思考与成长</h2>
+      <p class="module-tldr">
+        全链路AI创作工作流的可行性验证、超过2万字提示词工程的实战经验、<span class="highlight">"AI能生成一切，但创作者的核心价值在于判断什么是对的"</span>——以及颜色是角色性格延伸的深层认知。
+      </p>
+    </div>
+    <button class="module-toggle" aria-label="展开/收起">+</button>
+  </div>
+  <div class="module-body">
+    <div class="module-detail">
+
+      <div class="detail-block">
+        <h4>全链路AI创作的工作流认知</h4>
+        <p>从创意到成品的完整链路——<span class="tag">剧本</span> DeepSeek → <span class="tag">图像</span> GPT Image + Banana 2 → <span class="tag">视频</span> 如意SD2.0 → <span class="tag">音效</span> 如意/Minimax → <span class="tag">整合</span> 人工——验证了全链路AI创作的可行性。核心竞争力在于<span class="highlight">速度</span>：从"想要一个炫酷视频"的模糊需求，到包含剧本、分镜、提示词、音效设计的完整创作包，可在极短时间内完成。传统动画制作中需要数周的前期工作，被压缩到数轮对话之内。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>提示词工程的实战经验</h4>
+        <p>通过本项目超过2万字的提示词编写实践，深刻理解了提示词精度与生成质量的正相关关系：</p>
+        <p>· 材质描述必须精确到<span class="highlight">半透明程度、内部纹理、反光特性</span></p>
+        <p>· 动作描述必须拆解到<span class="highlight">每一个关节的运动方向和速度</span></p>
+        <p>· 色彩描述不能只说"蓝色"，要说<span class="highlight">"墨绿衣袍上流淌的蓝色水流，随动作产生波动"</span></p>
+        <p>· 速度描述不能只说"慢"，要说<span class="highlight">"0.8倍速慢动作"</span></p>
+        <div class="insight-quote">
+          "AI不会帮你补齐没有说清楚的东西。对画面想得越清楚，生成结果越接近预期。主角肩膀上的阴阳鱼如果只写'肩膀上有阴阳鱼'，AI可能会画成一个刺绣图案；但写清楚'悬浮的能量体，缓缓旋转'，AI才会生成正确的效果。"
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h4>技术工具与审美判断的边界</h4>
+        <p>本项目中最关键的几次转向——剔除赛博元素、主角配色从青到紫金到最终墨绿蓝水、双翼替代六翼——都与技术实现无关，纯粹是<span class="highlight">审美判断</span>。AI可以生成任何风格，但它不会告诉你哪种风格更合适、哪个颜色更高级、哪种形态更合理。</p>
+        <p>主角配色迭代的完整过程尤其能说明问题：青色不够高级，紫金偏离角色气质，墨绿蓝水才是"对"的答案。但"对"的标准是什么？是<span class="highlight">角色设定的自洽性</span>——一个沉静深厚的守护者，需要沉静的配色。这种判断是AI无法代劳的。</p>
+        <div class="insight-quote">
+          "在AI创作时代，创作者的核心价值不在于'能生成什么'，而在于'能判断什么是对的'。"
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h4>自家技术的深度应用</h4>
+        <p>视频生成和音效生成均使用公司自有的<span class="highlight">如意平台</span>（SD2.0 和 Minimax）。如意的SD2.0在处理东方玄幻特效方面展现了良好能力——蓝色水流的动态纹理、阴阳鱼的独立旋转、紫焰的流体运动。当创作者用自家工具完整跑通一个项目时，对工具的优势和局限会有最直观的认知——这种认知是任何产品文档都无法替代的。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>从"幻想"到"落地"的闭环能力</h4>
+        <p>从最初"想要一个炫酷特效视频"的模糊想法，到最终产出包含剧本、分镜（41个镜头）、完整提示词库（人物/场景/武器/特效）、音效设计、创作阐述的完整交付物。这个项目训练了一种<span class="highlight">闭环思维</span>：不满足于想出好点子，而是把点子推进到每一个细节都可执行的颗粒度。每个镜头的时间码、每种色彩的过渡方式、每个音效的频率层次——这些细节才是"创作"和"幻想"之间真正的鸿沟。而AI的作用，就是让跨越这道鸿沟的速度变得足够快。</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>配色方案与角色性格的深层关联</h4>
+        <p>这次创作让一个设计原则变得切身体会：<span class="highlight">颜色是角色的延伸，不是角色的装饰。</span>主角从青色到紫金到墨绿蓝水的迭代过程，本质上是在用色彩回答一个问题——"玄是一个什么样的人？"</p>
+        <p><span class="tag">青色</span>的答案是"一个拥有特异能量的人"（错，太表面）</p>
+        <p><span class="tag purple">紫金</span>的答案是"一个神圣威严的存在"（对，但偏离了角色的沉静内核）</p>
+        <p><span class="tag blue">墨绿蓝水</span>的答案是"一个承载了千年封印、与天地自然融为一体的守护者"（对，且准确）</p>
+        <p>最终方案中，墨绿是他作为"墨渊"的身份印记，蓝水流是他体内灵气的可视化，阴阳鱼是他力量本源的符号。三种元素合力讲了一句话：<span class="highlight">他是一个站在深渊边缘、内心却流淌着生生不息之力的守护者。</span></p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     FOOTER
+     ======================================== -->
+<footer class="site-footer reveal">
+  <p class="footer-credits">
+    郑博 · 作品创作档案 — <span class="name">墨渊觉醒</span>
+  </p>
+  <p style="font-size: 0.8rem; color: var(--text-muted);">
+    AI全链路创作 — DeepSeek + GPT Image + Banana 2 + 如意SD2.0 + 如意/Minimax
+  </p>
+  <div class="footer-links">
+    <a href="mailto:your@email.com">Email</a>
+    <a href="#">Bilibili</a>
+    <a href="#">Twitter / X</a>
+    <a href="#">作品视频</a>
+    <a href="#hero">返回顶部</a>
+  </div>
+  <p class="footer-copy">© 2025 郑博 · All rights reserved.</p>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="close-hint">点击任意处关闭</span>
+  <img src="" alt="" id="lightboxImg">
+</div>
+
+<!-- ========================================
+     SCRIPTS
+     ======================================== -->
+<script>
+// ==========================================
+// INK WASH CANVAS BACKGROUND
+// ==========================================
+(function() {
+  const canvas = document.getElementById('ink-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  const blobs = [];
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Create ink blobs
+  const COLORS = [
+    [26, 58, 44, 0.06],   // ink green
+    [20, 18, 26, 0.08],   // paper dark
+    [91, 158, 184, 0.03], // water blue
+    [107, 58, 122, 0.03], // mystic purple
+    [196, 163, 90, 0.02], // gold
+  ];
+
+  for (let i = 0; i < 8; i++) {
+    blobs.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 150 + Math.random() * 400,
+      dx: (Math.random() - 0.5) * 0.15,
+      dy: (Math.random() - 0.5) * 0.1,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.0002 + Math.random() * 0.0005,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    blobs.forEach(b => {
+      b.x += b.dx;
+      b.y += b.dy;
+      b.phase += b.speed;
+
+      // Wrap around
+      if (b.x < -b.r) b.x = w + b.r;
+      if (b.x > w + b.r) b.x = -b.r;
+      if (b.y < -b.r) b.y = h + b.r;
+      if (b.y > h + b.r) b.y = -b.r;
+
+      // Organic wobble
+      const wx = b.x + Math.sin(b.phase) * 60;
+      const wy = b.y + Math.cos(b.phase * 1.3) * 40;
+      const wr = b.r + Math.sin(b.phase * 0.7) * 30;
+
+      const grad = ctx.createRadialGradient(wx, wy, 0, wx, wy, wr);
+      grad.addColorStop(0, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.color[3] * 1.5})`);
+      grad.addColorStop(0.5, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.color[3]})`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ==========================================
+// FLOATING PARTICLES
+// ==========================================
+(function() {
+  const container = document.getElementById('particles');
+  const types = ['gold', 'blue', 'purple'];
+  const count = 30;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle', types[Math.floor(Math.random() * types.length)]);
+    const size = 2 + Math.random() * 5;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.bottom = -(Math.random() * 20) + '%';
+    p.style.animationDuration = 8 + Math.random() * 20 + 's';
+    p.style.animationDelay = Math.random() * 15 + 's';
+    container.appendChild(p);
+  }
+
+  // Periodically refresh particles
+  setInterval(() => {
+    const particles = container.querySelectorAll('.particle');
+    particles.forEach(p => {
+      if (Math.random() < 0.2) {
+        p.style.animationDuration = 8 + Math.random() * 20 + 's';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.bottom = -(Math.random() * 20) + '%';
+      }
+    });
+  }, 15000);
+})();
+
+// ==========================================
+// MODULE TOGGLE
+// ==========================================
+function toggleModule(header) {
+  const module = header.parentElement;
+  const isOpen = module.classList.contains('open');
+  const body = module.querySelector('.module-body');
+
+  if (isOpen) {
+    module.classList.remove('open');
+    header.setAttribute('aria-expanded', 'false');
+  } else {
+    // Close all other modules first (accordion behavior)
+    document.querySelectorAll('.module.open').forEach(m => {
+      if (m !== module) {
+        m.classList.remove('open');
+        m.querySelector('.module-header').setAttribute('aria-expanded', 'false');
+      }
+    });
+    module.classList.add('open');
+    header.setAttribute('aria-expanded', 'true');
+
+    // Scroll to module after transition
+    setTimeout(() => {
+      module.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+}
+
+// Allow keyboard toggle
+document.querySelectorAll('.module-header').forEach(header => {
+  header.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleModule(header);
+    }
+  });
+});
+
+// ==========================================
+// SCROLL-BASED SIDE NAV & REVEAL
+// ==========================================
+(function() {
+  const navLinks = document.querySelectorAll('.side-nav a');
+  const sections = [];
+  navLinks.forEach(link => {
+    const id = link.getAttribute('data-section');
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+
+        // Update active nav
+        const id = entry.target.id;
+        const navItem = document.querySelector(`.side-nav a[data-section="${id}"]`);
+        if (navItem) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          navItem.classList.add('active');
+        }
+      }
+    });
+  }, { threshold: 0.25, rootMargin: '-10% 0px -10% 0px' });
+
+  // Observe sections for nav
+  sections.forEach(s => observer.observe(s.el));
+
+  // Observe reveal elements
+  revealEls.forEach(el => observer.observe(el));
+})();
+
+// ==========================================
+// VIDEO LOADER (placeholder → actual embed)
+// ==========================================
+function loadVideo() {
+  const box = document.getElementById('videoBox');
+  const placeholder = document.getElementById('videoPlaceholder');
+  if (!placeholder) return;
+
+  // Replace with your actual video embed code:
+  // Option A: Bilibili embed
+  // placeholder.outerHTML = '<iframe src="//player.bilibili.com/player.html?bvid=YOUR_BVID&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;height:100%;"></iframe>';
+
+  // Option B: Self-hosted video
+  // placeholder.outerHTML = '<video src="./media/film.mp4" controls autoplay poster="./media/poster.jpg" style="width:100%;height:100%;object-fit:contain;"></video>';
+
+  // Option C: YouTube embed
+  // placeholder.outerHTML = '<iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;"></iframe>';
+
+  // For demo: keep placeholder but show message
+  placeholder.innerHTML = `
+    <div style="text-align:center;color:var(--text-dim);">
+      <div style="font-size:1.5rem;margin-bottom:0.5rem;">🎬</div>
+      <span class="placeholder-text">视频嵌入区域 — 替换 loadVideo() 中的代码即可</span>
+      <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;">
+        支持 Bilibili / YouTube / 自托管视频
+      </div>
+    </div>
+  `;
+}
+
+// ==========================================
+// AUDIO PLAY TOGGLE
+// ==========================================
+let currentAudio = null;
+
+function toggleAudio(btn, src) {
+  const isPlaying = btn.classList.contains('playing');
+
+  // Stop current
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  document.querySelectorAll('.audio-play.playing').forEach(b => {
+    b.classList.remove('playing');
+    b.textContent = '▶';
+  });
+
+  if (!isPlaying) {
+    const audio = new Audio(src);
+    currentAudio = audio;
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+    audio.play();
+    audio.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      currentAudio = null;
+    });
+  }
+}
+
+// ==========================================
+// LIGHTBOX — click any gallery image to enlarge
+// ==========================================
+(function() {
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+
+  // Attach click handlers to all gallery images
+  document.querySelectorAll('.media-card img').forEach(img => {
+    img.addEventListener('click', (e) => {
+      e.stopPropagation();
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  // Close with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+      closeLightbox();
+    }
+  });
+})();
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+</script>
+
+</body>
+</html>
