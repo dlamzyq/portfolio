@@ -1329,11 +1329,6 @@ function toggleModule(header) {
     });
     module.classList.add('open');
     header.setAttribute('aria-expanded', 'true');
-
-    // Scroll to module after transition
-    setTimeout(() => {
-      module.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   }
 }
 
