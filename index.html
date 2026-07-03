@@ -139,26 +139,37 @@ body {
 .side-nav a.active .label { opacity: 1; transform: translateX(0); }
 
 /* ========================================
-   LAG NOTICE BANNER
+   CARD-NOTICE BANNER
    ======================================== */
 .lag-banner {
   display: block;
   text-align: center;
-  padding: 0.7rem 1rem;
-  background: linear-gradient(135deg, rgba(196,163,90,0.15), rgba(232,201,122,0.1));
-  border-bottom: 1px solid rgba(196,163,90,0.2);
+  margin: 2rem auto 0;
+  padding: 1.2rem 2rem;
+  max-width: 600px;
+  background: linear-gradient(135deg, #1a1410, #1f1815);
+  border: 1px solid rgba(196,163,90,0.35);
+  border-radius: 12px;
   color: var(--gold-glow);
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   text-decoration: none;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   position: relative;
   z-index: 10;
-  transition: all var(--transition-smooth);
+  transition: all 0.3s;
+  box-shadow: 0 4px 24px rgba(196,163,90,0.08);
+  animation: cardPulse 2.5s ease-in-out infinite;
 }
 .lag-banner:hover {
-  background: linear-gradient(135deg, rgba(196,163,90,0.25), rgba(232,201,122,0.18));
-  color: #fff;
+  border-color: var(--gold-glow);
+  box-shadow: 0 6px 36px rgba(196,163,90,0.2);
+  transform: translateY(-2px);
+}
+@keyframes cardPulse {
+  0%, 100% { box-shadow: 0 4px 24px rgba(196,163,90,0.08); }
+  50% { box-shadow: 0 4px 32px rgba(196,163,90,0.18); }
 }
 
 /* ========================================
@@ -789,7 +800,7 @@ body {
 
 <!-- Lag Notice Banner -->
 <a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-banner">
-  ⚡ 视频或音频卡顿？点击此处查看飞书在线版完整作品
+  ⚡ 加载缓慢？点击此处 → 飞书在线版，视频音乐完整流畅体验
 </a>
 
 <!-- ========================================
