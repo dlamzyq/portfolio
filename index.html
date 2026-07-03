@@ -139,38 +139,98 @@ body {
 .side-nav a.active .label { opacity: 1; transform: translateX(0); }
 
 /* ========================================
-   CARD-NOTICE BANNER
+   LAG NOTICE BANNER — 置顶条
    ======================================== */
-.lag-banner {
+.lag-topbar {
   display: block;
   text-align: center;
-  margin: 2rem auto 0;
-  padding: 1.2rem 2rem;
-  max-width: 600px;
-  background: linear-gradient(135deg, #1a1410, #1f1815);
-  border: 1px solid rgba(196,163,90,0.35);
-  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  background: #1a1410;
+  border-bottom: 1px solid rgba(196,163,90,0.3);
   color: var(--gold-glow);
   font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.8rem;
   text-decoration: none;
   letter-spacing: 0.04em;
-  position: relative;
-  z-index: 10;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+}
+.lag-topbar:hover { background: #221a14; color: #fff; }
+
+/* Floating button */
+.lag-float {
+  position: fixed;
+  bottom: 1.5rem; right: 1.5rem;
+  z-index: 999;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c4a35a, #e8c97a);
+  color: #0c0c14;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(196,163,90,0.35);
+  animation: floatPulse 2s ease-in-out infinite;
+  transition: transform 0.3s;
+}
+.lag-float:hover { transform: scale(1.15); }
+@keyframes floatPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(196,163,90,0.35); }
+  50% { box-shadow: 0 4px 36px rgba(196,163,90,0.6); }
+}
+
+/* Modal overlay */
+.lag-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(6,6,9,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.lag-modal {
+  background: linear-gradient(160deg, #1a1610, #14121a);
+  border: 1px solid rgba(196,163,90,0.4);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: modalIn 0.4s ease-out;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.lag-modal h3 { font-family: var(--font-display); font-size: 1.6rem; color: var(--gold-glow); margin-bottom: 0.8rem; }
+.lag-modal p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.7; }
+.lag-modal .btn-go {
+  display: inline-block;
+  padding: 0.7rem 2rem;
+  background: linear-gradient(135deg, #c4a35a, #e8c97a);
+  color: #0c0c14;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
   transition: all 0.3s;
-  box-shadow: 0 4px 24px rgba(196,163,90,0.08);
-  animation: cardPulse 2.5s ease-in-out infinite;
 }
-.lag-banner:hover {
-  border-color: var(--gold-glow);
-  box-shadow: 0 6px 36px rgba(196,163,90,0.2);
-  transform: translateY(-2px);
+.lag-modal .btn-go:hover { box-shadow: 0 4px 24px rgba(196,163,90,0.4); transform: translateY(-1px); }
+.lag-modal .btn-close {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
 }
-@keyframes cardPulse {
-  0%, 100% { box-shadow: 0 4px 24px rgba(196,163,90,0.08); }
-  50% { box-shadow: 0 4px 32px rgba(196,163,90,0.18); }
-}
+.lag-modal .btn-close:hover { color: var(--text-dim); }
 
 /* ========================================
    HERO SECTION
@@ -798,10 +858,24 @@ body {
   <a href="#harvest" data-section="harvest"><span class="label">收获</span><span class="dot"></span></a>
 </nav>
 
-<!-- Lag Notice Banner -->
-<a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-banner">
-  ⚡ 加载缓慢？点击此处 → 飞书在线版，视频音乐完整流畅体验
+<!-- Lag Notice: Top Bar -->
+<a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-topbar">
+  ⚡ 卡顿？点击此处查看飞书在线版，视频音乐完整流畅 →
 </a>
+
+<!-- Lag Notice: Floating Button -->
+<a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-float" title="飞书流畅版">⚡</a>
+
+<!-- Lag Notice: First-visit Modal -->
+<div class="lag-modal-overlay" id="lagModal">
+  <div class="lag-modal">
+    <h3>加载缓慢？</h3>
+    <p>网站托管于境外服务器，视频和音乐可能加载较慢。<br>飞书在线版包含完整作品，国内流畅访问。</p>
+    <a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="btn-go">前往飞书在线版 →</a>
+    <br>
+    <button class="btn-close" onclick="closeLagModal()">已了解，继续浏览本站</button>
+  </div>
+</div>
 
 <!-- ========================================
      HERO — 封面首屏
@@ -1440,6 +1514,21 @@ function toggleAudio(btn, src) {
     });
   }
 }
+
+// ==========================================
+// LAG MODAL — show once per browser
+// ==========================================
+function closeLagModal() {
+  document.getElementById('lagModal').style.display = 'none';
+  try { localStorage.setItem('lagModalDismissed', '1'); } catch(e) {}
+}
+(function() {
+  try {
+    if (localStorage.getItem('lagModalDismissed') === '1') {
+      document.getElementById('lagModal').style.display = 'none';
+    }
+  } catch(e) {}
+})();
 
 // ==========================================
 // LIGHTBOX — click any gallery image to enlarge
