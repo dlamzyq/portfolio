@@ -1322,13 +1322,6 @@ function toggleModule(header) {
     module.classList.remove('open');
     header.setAttribute('aria-expanded', 'false');
   } else {
-    // Close all other modules first (accordion behavior)
-    document.querySelectorAll('.module.open').forEach(m => {
-      if (m !== module) {
-        m.classList.remove('open');
-        m.querySelector('.module-header').setAttribute('aria-expanded', 'false');
-      }
-    });
     module.classList.add('open');
     header.setAttribute('aria-expanded', 'true');
   }
