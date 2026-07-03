@@ -1485,6 +1485,13 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
   document.body.style.overflow = '';
 }
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js', { scope: '/portfolio/' })
+    .then(reg => console.log('SW 已注册，后续访问将离线可用'))
+    .catch(err => console.log('SW 注册失败:', err));
+}
 </script>
 
 </body>
