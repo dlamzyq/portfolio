@@ -139,6 +139,29 @@ body {
 .side-nav a.active .label { opacity: 1; transform: translateX(0); }
 
 /* ========================================
+   LAG NOTICE BANNER
+   ======================================== */
+.lag-banner {
+  display: block;
+  text-align: center;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(135deg, rgba(196,163,90,0.15), rgba(232,201,122,0.1));
+  border-bottom: 1px solid rgba(196,163,90,0.2);
+  color: var(--gold-glow);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  position: relative;
+  z-index: 10;
+  transition: all var(--transition-smooth);
+}
+.lag-banner:hover {
+  background: linear-gradient(135deg, rgba(196,163,90,0.25), rgba(232,201,122,0.18));
+  color: #fff;
+}
+
+/* ========================================
    HERO SECTION
    ======================================== */
 .hero {
@@ -763,6 +786,11 @@ body {
   <a href="#process" data-section="process"><span class="label">过程</span><span class="dot"></span></a>
   <a href="#harvest" data-section="harvest"><span class="label">收获</span><span class="dot"></span></a>
 </nav>
+
+<!-- Lag Notice Banner -->
+<a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-banner">
+  ⚡ 视频或音频卡顿？点击此处查看飞书在线版完整作品
+</a>
 
 <!-- ========================================
      HERO — 封面首屏
