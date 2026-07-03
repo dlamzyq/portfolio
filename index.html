@@ -1378,12 +1378,22 @@ function toggleAudio(btn, src) {
   });
 
   if (!isPlaying) {
-    const audio = new Audio(src);
+    const audio = new Audio(encodeURI(src));
     currentAudio = audio;
     btn.classList.add('playing');
     btn.textContent = '⏸';
-    audio.play();
+    audio.play().catch(err => {
+      console.log('音频播放失败:', err);
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      currentAudio = null;
+    });
     audio.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      currentAudio = null;
+    });
+    audio.addEventListener('error', () => {
       btn.classList.remove('playing');
       btn.textContent = '▶';
       currentAudio = null;
