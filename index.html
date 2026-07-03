@@ -1379,7 +1379,7 @@ function toggleAudio(btn, src) {
   });
 
   if (!isPlaying) {
-    const audio = new Audio(encodeURI(src));
+    const audio = new Audio(src);
     currentAudio = audio;
     btn.classList.add('playing');
     btn.textContent = '⏸';
