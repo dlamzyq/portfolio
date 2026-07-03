@@ -182,55 +182,6 @@ body {
   50% { box-shadow: 0 4px 36px rgba(196,163,90,0.6); }
 }
 
-/* Modal overlay */
-.lag-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  background: rgba(6,6,9,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-}
-.lag-modal {
-  background: linear-gradient(160deg, #1a1610, #14121a);
-  border: 1px solid rgba(196,163,90,0.4);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  max-width: 420px;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  animation: modalIn 0.4s ease-out;
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.lag-modal h3 { font-family: var(--font-display); font-size: 1.6rem; color: var(--gold-glow); margin-bottom: 0.8rem; }
-.lag-modal p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.7; }
-.lag-modal .btn-go {
-  display: inline-block;
-  padding: 0.7rem 2rem;
-  background: linear-gradient(135deg, #c4a35a, #e8c97a);
-  color: #0c0c14;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s;
-}
-.lag-modal .btn-go:hover { box-shadow: 0 4px 24px rgba(196,163,90,0.4); transform: translateY(-1px); }
-.lag-modal .btn-close {
-  margin-top: 1rem;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-family: var(--font-body);
-}
-.lag-modal .btn-close:hover { color: var(--text-dim); }
 
 /* ========================================
    HERO SECTION
@@ -865,17 +816,6 @@ body {
 
 <!-- Lag Notice: Floating Button -->
 <a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="lag-float" title="飞书流畅版">⚡</a>
-
-<!-- Lag Notice: First-visit Modal -->
-<div class="lag-modal-overlay" id="lagModal">
-  <div class="lag-modal">
-    <h3>加载缓慢？</h3>
-    <p>网站托管于境外服务器，视频和音乐可能加载较慢。<br>飞书在线版包含完整作品，国内流畅访问。</p>
-    <a href="https://wcny185uw6k5.feishu.cn/wiki/Twb9wnYQiiq20akIHAlczdaknmg" target="_blank" class="btn-go">前往飞书在线版 →</a>
-    <br>
-    <button class="btn-close" onclick="closeLagModal()">已了解，继续浏览本站</button>
-  </div>
-</div>
 
 <!-- ========================================
      HERO — 封面首屏
@@ -1514,21 +1454,6 @@ function toggleAudio(btn, src) {
     });
   }
 }
-
-// ==========================================
-// LAG MODAL — show once per browser
-// ==========================================
-function closeLagModal() {
-  document.getElementById('lagModal').style.display = 'none';
-  try { localStorage.setItem('lagModalDismissed', '1'); } catch(e) {}
-}
-(function() {
-  try {
-    if (localStorage.getItem('lagModalDismissed') === '1') {
-      document.getElementById('lagModal').style.display = 'none';
-    }
-  } catch(e) {}
-})();
 
 // ==========================================
 // LIGHTBOX — click any gallery image to enlarge
